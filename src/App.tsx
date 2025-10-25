@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import ShoppingCart from "./pages/ShoppingCart";
 import NotFound from "./pages/NotFound";
 import Layout from "./layout/Layout";
+import ProductInfo from "./pages/ProductInfo";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<ProductInfo />} />
           <Route path="/cart" element={<ShoppingCart />} />
 
           <Route path="*" element={<NotFound />} />
