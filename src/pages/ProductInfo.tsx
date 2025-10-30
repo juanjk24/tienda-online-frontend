@@ -23,7 +23,7 @@ export default function ProductInfo() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                 <div className="space-y-4">
                     <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
-                        <img src={product?.image} className="object-cover" alt={product?.title} />
+                        <img src={product?.image} className="w-full h-full object-cover" alt={product?.title} />
                     </div>
                 </div>
 

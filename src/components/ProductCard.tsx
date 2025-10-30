@@ -20,7 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link to={`/products/${product.id}`}>
       <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-border py-6 shadow-sm group overflow-hidden transition-all hover:shadow-lg cursor-pointer h-full">
         <div className="p-0">
-          <div className="relative aspect-square overflow-hidden bg-muted">
+          <div className="flex relative aspect-square overflow-hidden bg-muted">
             <img
               src={product.image}
               alt={product.title}
@@ -44,7 +44,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </p>
           </div>
 
-          <div className="flex w-full items-center justify-between gap-2 mt-2">
+          <div className="flex flex-col w-full gap-4 mt-2">
             <span className="text-xl font-bold">{formatPrice(product.price)}</span>
             <Button onClick={handleAddToCart} size="sm" className="py-1.5 px-3">
               <ShoppingCart className="mr-2 h-4 w-4" />
