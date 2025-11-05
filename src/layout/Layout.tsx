@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {children}
       <Footer />
 
-      <Toaster richColors />
+      <Toaster richColors expand={false}/>
     </div>
   );
 }

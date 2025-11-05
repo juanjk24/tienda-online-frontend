@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { LogIn } from "lucide-react";
 import { toast } from "sonner";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import InputText from "../components/InputText";
-import { login } from "../services/auth";
+import { register } from "../services/auth";
 import useAuthStore from "../store/auth";
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/", { replace: true });
-    }
-  }, []);
 
   const zustandLogin = useAuthStore((state) => state.login);
-  const [searchParams] = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/";
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -37,7 +28,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const firebaseUser = await login(email, password);
+      const firebaseUser = await register(email, password);
 
       const userData = {
         uid: firebaseUser.uid,
@@ -46,25 +37,12 @@ export default function Login() {
 
       zustandLogin(userData);
 
-      toast.success("Inicio de sesión exitoso");
-      navigate(redirectPath);
+      toast.success("Registro exitoso");
+      navigate("/");
     } catch (err: any) {
-      console.error("Login Failed:", err.message);
+      console.error("Registro Fallido:", err.message);
 
-      let errorMessage = "Error al iniciar sesión. Verifica tus credenciales.";
-      
-      if (err.code === "auth/invalid-email") {
-        errorMessage = "El formato del email es inválido.";
-      } else if (
-        err.code === "auth/user-not-found" ||
-        err.code === "auth/wrong-password" ||
-        err.code === "auth/invalid-credential"
-      ) {
-        errorMessage = "Email o contraseña incorrectos.";
-      } else if (err.code === "auth/too-many-requests") {
-        errorMessage =
-          "Demasiados intentos fallidos. Inténtalo de nuevo más tarde.";
-      }
+      let errorMessage = "Error al registrar. Verifica tus credenciales.";
 
       toast.error(errorMessage);
     } finally {
@@ -77,10 +55,10 @@ export default function Login() {
       <div className="container mx-auto px-4 py-12">
         <Card>
           <h1 className="text-4xl font-bold tracking-tight text-center mb-2">
-            Iniciar sesión
+            Registrarse
           </h1>
           <p className="text-muted-foreground text-center">
-            Ingresa tus credenciales para acceder a tu cuenta
+            Ingresa tus credenciales para crear una cuenta
           </p>
 
           <form onSubmit={handleSubmit}>
@@ -112,7 +90,7 @@ export default function Login() {
               <Button className="w-full disabled:opacity-70 disabled:cursor-not-allowed" type="submit" disabled={isLoading}>
                 <LogIn className="mr-2 h-4 w-4" />
                 {
-                  isLoading ? "Iniciando sesión..." : "Iniciar sesión"
+                  isLoading ? "Registrando..." : "Registrarse"
                 }
               </Button>
             </div>
@@ -120,12 +98,12 @@ export default function Login() {
 
           <div className="mt-6">
             <p className="text-center text-sm text-muted-foreground">
-              ¿No tienes una cuenta?{" "}
+              ¿Ya tienes una cuenta?{" "}
               <Link
                 className="text-primary hover:underline font-medium"
-                to="/register"
+                to="/login"
               >
-                Regístrate aquí
+                Inicia sesión
               </Link>
             </p>
           </div>
