@@ -1,19 +1,23 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import type { Product } from "../types";
+import type { Product } from "../types/product";
 import { formatPrice } from "../utils/format-price";
 import Button from "./Button";
 import { toast } from "sonner";
+import useCartStore from "../store/cart";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const addItem = useCartStore((state) => state.addItem)
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
+    addItem(product)
     toast.success(`${product.title} agregado al carrito!`)
   };
   return (

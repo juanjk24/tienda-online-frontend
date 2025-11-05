@@ -1,10 +1,23 @@
+import { useProducts } from "../../hooks/useProducts";
 import Button from "../Button";
-import { products } from "../../data/products";
 import ProductCard from "../ProductCard";
-
-const principalProducts = products.slice(0, 4);
+import ProductCardSkeleton from "../Skeletons/ProductCardSkeleton";
 
 export default function PrincipalProductsSection() {
+  const { products: principalProducts, loading, error } = useProducts({ limit: 4 });
+
+  if (loading) {
+    return <ProductCardSkeleton />;
+  }
+
+  if (error) {
+    return <section className="container mx-auto px-4 py-16">
+      <div className="space-y-8 text-center text-destructive">
+        {error}
+      </div>
+    </section>;
+  }
+
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="space-y-8">
@@ -18,7 +31,7 @@ export default function PrincipalProductsSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {principalProducts.map((product) => (
+          {principalProducts?.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
