@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
-import { products } from "../data/products";
 import { formatPrice } from "../utils/format-price";
 import NotFoundProduct from "../components/ProductInfoPage/NotFoundProduct";
 import ProductActions from "../components/ProductInfoPage/ProductActions";
+import { useProduct } from "../hooks/useProduct";
+import ProductInfoSkeleton from "../components/Skeletons/ProductInfoSkeleton";
 
 export default function ProductInfo() {
   const { id } = useParams();
@@ -11,9 +12,13 @@ export default function ProductInfo() {
     return <NotFoundProduct />;
   }
 
-  const product = products.find((p) => p.id === +id);
+  const { product, loading, error } = useProduct(id);
 
-  if (!product) {
+  if (loading) {
+    return <ProductInfoSkeleton />;
+  }
+
+  if (!product || error) {
     return <NotFoundProduct />;
   }
 
@@ -35,7 +40,7 @@ export default function ProductInfo() {
                     </div>
 
                     <div className="space-y-4">
-                        <ProductActions />
+                        <ProductActions product={product} />
                     </div>
 
                     <div className="space-y-4 pt-6 border-t border-border">
