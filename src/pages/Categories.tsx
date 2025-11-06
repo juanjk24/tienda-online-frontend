@@ -1,6 +1,6 @@
 import CategoryItem from "../components/CategoryItems";
 import CategoryItemSkeleton from "../components/Skeletons/CategoryItemSkeleton";
-import { useCategories } from "../hooks/useCategories";
+import { useCategories } from  "../hooks/useCategories";
 
 export default function Categories() {
     const { categories, loading, error } = useCategories();
