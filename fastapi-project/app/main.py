@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import products, users, orders
+from app.api.endpoints import products, users, orders, categories
 from app.core.firebase import initialize_firebase
 
 app = FastAPI(
@@ -33,6 +33,7 @@ async def startup_event():
 app.include_router(products.router, prefix="/products", tags=["Productos"])
 app.include_router(users.router, prefix="/users", tags=["Usuarios"])
 app.include_router(orders.router, prefix="/orders", tags=["Pedidos"])
+app.include_router(categories.router, prefix="/categories", tags=["Categorías"])
 
 @app.get("/")
 def read_root():
