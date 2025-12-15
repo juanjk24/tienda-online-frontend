@@ -1,26 +1,65 @@
-import api from "./api";
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  query,
+  limit,
+  where,
+  type QueryConstraint,
+} from "firebase/firestore";
+import { db } from "./firebase";
 import type { Product } from "../types/product";
 
-// Obtener lista de productos
+const productsCollectionRef = collection(db, "products");
+
 export async function getProducts(limitCount?: number, category?: string): Promise<Product[]> {
   try {
-    const params: Record<string, any> = {};
-    if (limitCount) params.limit = limitCount;
-    if (category) params.category = category;
+    const constraints: QueryConstraint[] = [];
 
-    const response = await api.get("/products", { params });
-    return response.data;
+    // Si se proporciona una categoría, añadimos una condición 'where'
+    if (category) {
+      constraints.push(where('category', '==', category));
+    }
+
+    // Si se proporciona un limitCount, lo añadimos a las restricciones
+    if (typeof limitCount === 'number' && limitCount > 0) {
+      constraints.push(limit(limitCount));
+    }
+
+    // Construimos la consulta con todas las restricciones acumuladas
+    const q = query(productsCollectionRef, ...constraints);
+
+    const snapshot = await getDocs(q);
+
+    const products: Product[] = [];
+    snapshot.forEach((doc) => {
+      products.push({
+        id: doc.id,
+        ...(doc.data() as Omit<Product, "id">),
+      });
+    });
+
+    return products;
   } catch (error) {
     console.error("Error al obtener los productos:", error);
     throw new Error("No se pudieron cargar los productos.");
   }
 }
 
-// Obtener producto por ID
 export async function getProductById(id: string): Promise<Product | null> {
   try {
-    const response = await api.get(`/products/${id}`);
-    return response.data;
+    const docRef = doc(db, "products", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<Product, "id">),
+      };
+    } else {
+      return null;
+    }
   } catch (error) {
     console.error(`Error al obtener el producto con ID ${id}:`, error);
     throw new Error("Error al obtener el producto.");
