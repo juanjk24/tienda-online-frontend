@@ -1,46 +1,26 @@
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  query,
-  limit,
-  where,
-  type QueryConstraint,
-} from "firebase/firestore";
-import { db } from "./firebase";
+import axios from "axios";
 import type { Product } from "../types/product";
 
-const productsCollectionRef = collection(db, "products");
+const API_URL = "http://127.0.0.1:8000/products";
+
+const apiClient = axios.create({
+  baseURL: API_URL,
+});
 
 export async function getProducts(limitCount?: number, category?: string): Promise<Product[]> {
   try {
-    const constraints: QueryConstraint[] = [];
+    const params: Record<string, string | number> = {};
 
-    // Si se proporciona una categoría, añadimos una condición 'where'
     if (category) {
-      constraints.push(where('category', '==', category));
+      params.category = category;
     }
 
-    // Si se proporciona un limitCount, lo añadimos a las restricciones
-    if (typeof limitCount === 'number' && limitCount > 0) {
-      constraints.push(limit(limitCount));
+    if (typeof limitCount === "number" && limitCount > 0) {
+      params.limit = limitCount;
     }
 
-    // Construimos la consulta con todas las restricciones acumuladas
-    const q = query(productsCollectionRef, ...constraints);
-
-    const snapshot = await getDocs(q);
-
-    const products: Product[] = [];
-    snapshot.forEach((doc) => {
-      products.push({
-        id: doc.id,
-        ...(doc.data() as Omit<Product, "id">),
-      });
-    });
-
-    return products;
+    const response = await apiClient.get<Product[]>("/", { params });
+    return response.data;
   } catch (error) {
     console.error("Error al obtener los productos:", error);
     throw new Error("No se pudieron cargar los productos.");
@@ -49,18 +29,12 @@ export async function getProducts(limitCount?: number, category?: string): Promi
 
 export async function getProductById(id: string): Promise<Product | null> {
   try {
-    const docRef = doc(db, "products", id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return {
-        id: docSnap.id,
-        ...(docSnap.data() as Omit<Product, "id">),
-      };
-    } else {
+    const response = await apiClient.get<Product>(`/${id}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
       return null;
     }
-  } catch (error) {
     console.error(`Error al obtener el producto con ID ${id}:`, error);
     throw new Error("Error al obtener el producto.");
   }
