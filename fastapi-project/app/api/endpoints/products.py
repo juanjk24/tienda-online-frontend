@@ -1,34 +1,83 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
-from app.schemas.product import Product, ProductCreate
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
+from app.schemas.product import Product, ProductCreate, ProductUpdate
+from app.services.product_service import product_service
 
 router = APIRouter()
 
-# Simulación de base de datos en memoria
-fake_products_db = [
-    {"id": 1, "name": "Laptop", "description": "Laptop potente", "price": 1500.0, "stock": 5},
-    {"id": 2, "name": "Mouse", "description": "Mouse inalámbrico", "price": 25.50, "stock": 20},
-]
+@router.get("/", response_model=List[dict])
+def read_products(category: Optional[str] = Query(None, description="Filtrar por categoría")):
+    """
+    Obtener todos los productos desde Firebase Firestore.
+    Opcionalmente filtrar por categoría.
+    """
+    try:
+        if category:
+            products = product_service.get_products_by_category(category)
+        else:
+            products = product_service.get_all_products()
+        return products
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener productos: {str(e)}")
 
-@router.get("/", response_model=List[Product])
-def read_products():
-    """Obtener todos los productos"""
-    return fake_products_db
+@router.get("/{product_id}", response_model=dict)
+def read_product(product_id: str):
+    """
+    Obtener un producto por su ID desde Firebase Firestore
+    """
+    try:
+        product = product_service.get_product_by_id(product_id)
+        if product is None:
+            raise HTTPException(status_code=404, detail="Producto no encontrado")
+        return product
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener producto: {str(e)}")
 
-@router.get("/{product_id}", response_model=Product)
-def read_product(product_id: int):
-    """Obtener un producto por su ID"""
-    # Buscamos el producto en la lista
-    product = next((item for item in fake_products_db if item["id"] == product_id), None)
-    if product is None:
-        raise HTTPException(status_code=404, detail="Producto no encontrado")
-    return product
-
-@router.post("/", response_model=Product)
+@router.post("/", response_model=dict, status_code=201)
 def create_product(product: ProductCreate):
-    """Crear un nuevo producto"""
-    new_id = len(fake_products_db) + 1
-    new_product = product.dict()
-    new_product["id"] = new_id
-    fake_products_db.append(new_product)
-    return new_product
+    """
+    Crear un nuevo producto en Firebase Firestore
+    """
+    try:
+        product_data = product.model_dump()
+        new_product = product_service.create_product(product_data)
+        return new_product
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al crear producto: {str(e)}")
+
+@router.put("/{product_id}", response_model=dict)
+def update_product(product_id: str, product: ProductUpdate):
+    """
+    Actualizar un producto existente en Firebase Firestore
+    """
+    try:
+        product_data = product.model_dump(exclude_unset=True)
+        updated_product = product_service.update_product(product_id, product_data)
+        
+        if updated_product is None:
+            raise HTTPException(status_code=404, detail="Producto no encontrado")
+        
+        return updated_product
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al actualizar producto: {str(e)}")
+
+@router.delete("/{product_id}", status_code=204)
+def delete_product(product_id: str):
+    """
+    Eliminar un producto de Firebase Firestore
+    """
+    try:
+        success = product_service.delete_product(product_id)
+        
+        if not success:
+            raise HTTPException(status_code=404, detail="Producto no encontrado")
+        
+        return None
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al eliminar producto: {str(e)}")

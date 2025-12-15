@@ -7,14 +7,25 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     price: float
     stock: int = 0
+    category: Optional[str] = None
+    image: Optional[str] = None
 
 # Esquema para crear un producto (lo que recibimos del cliente)
 class ProductCreate(ProductBase):
     pass
 
+# Esquema para actualizar un producto (campos opcionales)
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    stock: Optional[int] = None
+    category: Optional[str] = None
+    image: Optional[str] = None
+
 # Esquema para leer un producto (lo que devolvemos, incluye el ID)
 class Product(ProductBase):
-    id: int
+    id: str
 
     class Config:
         from_attributes = True

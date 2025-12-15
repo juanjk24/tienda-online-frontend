@@ -2,4 +2,7 @@
 fastapi
 uvicorn[standard]
 pydantic
+pydantic-settings
 email-validator
+firebase-admin
+python-dotenv
