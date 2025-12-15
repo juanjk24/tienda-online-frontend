@@ -13,12 +13,14 @@ export default function Products() {
     return <ProductCardSkeleton items={8} />;
   }
 
-   if (error) {
-    return <section className="container mx-auto px-4 py-16">
-      <div className="space-y-8 text-center text-destructive">
-        {error}
-      </div>
-    </section>;
+  if (error) {
+    return (
+      <section className="container mx-auto px-4 py-16">
+        <div className="space-y-8 text-center text-destructive">
+          {error}
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -26,7 +28,9 @@ export default function Products() {
       <div className="space-y-8">
         <div className="space-y-2">
           <h1 className="text-4xl font-bold tracking-tight">Todos los productos</h1>
-          <p className="text-muted-foreground">Descubre nuestra colección completa de {products?.length} productos</p>
+          <p className="text-muted-foreground">
+            Descubre nuestra colección completa de {products?.length} productos
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

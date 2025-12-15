@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { LogIn } from "lucide-react";
 import { toast } from "sonner";
 import Button from "../components/Button";
