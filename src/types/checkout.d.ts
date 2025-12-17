@@ -1,4 +1,4 @@
-interface CheckoutFormData {
+export interface CheckoutFormData {
   // Información personal
   nombres: string
   apellidos: string
