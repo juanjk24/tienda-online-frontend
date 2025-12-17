@@ -11,10 +11,10 @@ class ProductService:
     def __init__(self):
         self.collection_name = "products"
     
-    def get_all_products(self, category: Optional[str] = None) -> List[dict]:
+    def get_all_products(self, category: Optional[str] = None, limit: Optional[int] = None) -> List[dict]:
         """
         Obtiene todos los productos de Firestore.
-        Opcionalmente filtra por categoría.
+        Opcionalmente filtra por categoría y limita resultados.
         """
         try:
             db = get_db()
@@ -23,9 +23,14 @@ class ProductService:
             # Filtrar por categoría si se proporciona
             if category:
                 query = products_ref.where(filter=FieldFilter("category", "==", category))
-                docs = query.stream()
             else:
-                docs = products_ref.stream()
+                query = products_ref
+            
+            # Aplicar límite si se proporciona
+            if limit:
+                query = query.limit(limit)
+            
+            docs = query.stream()
             
             products = []
             for doc in docs:

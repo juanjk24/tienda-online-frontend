@@ -6,16 +6,16 @@ from app.services.product_service import product_service
 router = APIRouter()
 
 @router.get("/", response_model=List[dict])
-def read_products(category: Optional[str] = Query(None, description="Filtrar por categoría")):
+def read_products(
+    category: Optional[str] = Query(None, description="Filtrar por categoría"),
+    limit: Optional[int] = Query(None, description="Limitar número de productos", ge=1)
+):
     """
     Obtener todos los productos desde Firebase Firestore.
-    Opcionalmente filtrar por categoría.
+    Opcionalmente filtrar por categoría y limitar resultados.
     """
     try:
-        if category:
-            products = product_service.get_products_by_category(category)
-        else:
-            products = product_service.get_all_products()
+        products = product_service.get_all_products(category=category, limit=limit)
         return products
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener productos: {str(e)}")
