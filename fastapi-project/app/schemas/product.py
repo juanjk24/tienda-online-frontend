@@ -3,10 +3,9 @@ from typing import Optional
 
 # Esquema base con atributos comunes
 class ProductBase(BaseModel):
-    name: str
+    title: str
     description: Optional[str] = None
     price: float
-    stock: int = 0
     category: Optional[str] = None
     image: Optional[str] = None
 
@@ -16,10 +15,9 @@ class ProductCreate(ProductBase):
 
 # Esquema para actualizar un producto (campos opcionales)
 class ProductUpdate(BaseModel):
-    name: Optional[str] = None
+    title: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
-    stock: Optional[int] = None
     category: Optional[str] = None
     image: Optional[str] = None
 

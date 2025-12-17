@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import InputText from "../components/InputText";
-import { register } from "../services/auth";
+import { register, getUserRole } from "../services/auth";
 import useAuthStore from "../store/auth";
 
 export default function Register() {
@@ -30,9 +30,13 @@ export default function Register() {
     try {
       const firebaseUser = await register(email, password);
 
+      // Obtener el rol desde los custom claims (por defecto será 'user')
+      const role = await getUserRole();
+
       const userData = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
+        role: role
       };
 
       zustandLogin(userData);

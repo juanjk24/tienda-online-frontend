@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import products, categories, orders
+from app.api.endpoints import products, categories, orders, auth
 from app.core.firebase import initialize_firebase
 
 app = FastAPI(
@@ -30,6 +30,7 @@ async def startup_event():
     except Exception as e:
         print(f"❌ Error al inicializar Firebase: {e}")
 
+app.include_router(auth.router, prefix="/api", tags=["Autenticación"])
 app.include_router(products.router, prefix="/products", tags=["Productos"])
 app.include_router(categories.router, prefix="/categories", tags=["Categorías"])
 app.include_router(orders.router, prefix="/orders", tags=["Órdenes"])

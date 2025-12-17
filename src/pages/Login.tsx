@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import InputText from "../components/InputText";
-import { login } from "../services/auth";
+import { login, getUserRole } from "../services/auth";
 import useAuthStore from "../store/auth";
 
 export default function Login() {
@@ -39,10 +39,13 @@ export default function Login() {
     try {
       const firebaseUser = await login(email, password);
 
+      // Obtener el rol desde los custom claims
+      const role = await getUserRole();
+
       const userData = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
-        role: firebaseUser.getIdTokenResult()
+        role: role
       };
 
       zustandLogin(userData);

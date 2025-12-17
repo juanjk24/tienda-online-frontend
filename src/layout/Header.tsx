@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Menu, X, Home, Package, Grid3X3, PackageSearch } from "lucide-react";
+import { ShoppingCart, Menu, X, Home, Package, Grid3X3, PackageSearch, Shield } from "lucide-react";
 import { useState } from "react";
 import AuthButton from "../components/AuthButton";
 import useAuthStore from "../store/auth";
@@ -17,6 +17,7 @@ export default function Header() {
   const { pathname } = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -31,10 +32,16 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link className="flex items-center space-x-2" to="/" onClick={closeMobileMenu}>
+          <Link className="flex items-center space-x-2 justify-center" to="/" onClick={closeMobileMenu}>
             <span className="text-xl md:text-2xl font-bold tracking-tight">
               tienda online
             </span>
+            {isAdmin && (
+              <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-semibold bg-green-500 text-white rounded-md">
+                <Shield className="h-3 w-3" />
+                Admin
+              </span>
+            )}
           </Link>
 
           {/* Desktop Navigation */}

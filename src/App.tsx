@@ -10,8 +10,12 @@ import ProductInfo from "./pages/ProductInfo";
 import { ScrollToTop } from "./components/ScrollTop";
 import Categories from "./pages/Categories";
 import Orders from "./pages/Orders";
+import { useAuthSync } from "./hooks/useAuthSync";
 
 function App() {
+  // Sincronizar el estado de autenticación con Firebase
+  useAuthSync();
+
   return (
     <>
       <Layout>

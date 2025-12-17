@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from app.schemas.category import Category, CategoryCreate, CategoryUpdate
 from app.services.category_service import category_service
+from app.core.auth import require_admin
 
 router = APIRouter()
 
@@ -32,13 +33,12 @@ def read_category(category_id: str):
         raise HTTPException(status_code=500, detail=f"Error al obtener categoría: {str(e)}")
 
 @router.post("/", response_model=dict, status_code=201)
-def create_category(category: CategoryCreate):
+def create_category(category: CategoryCreate, admin_user: dict = Depends(require_admin)):
     """
     Crear una nueva categoría en Firebase Firestore
     """
     try:
-        category_data = category.model_dump()
-        new_category = category_service.create_category(category_data)
+        new_category = category_service.create_category(category)
         return new_category
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al crear categoría: {str(e)}")

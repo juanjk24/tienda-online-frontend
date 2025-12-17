@@ -39,3 +39,17 @@ export async function getProductById(id: string): Promise<Product | null> {
     throw new Error("Error al obtener el producto.");
   }
 }
+
+export async function createProduct(productData: Omit<Product, "id">, token: string): Promise<Product> {
+  try {
+    const response = await apiClient.post<Product>("/", productData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear el producto:", error);
+    throw new Error("No se pudo crear el producto.");
+  }
+}

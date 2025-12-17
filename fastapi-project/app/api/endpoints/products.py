@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
 from app.schemas.product import Product, ProductCreate, ProductUpdate
 from app.services.product_service import product_service
+from app.core.auth import require_admin
 
 router = APIRouter()
 
@@ -36,13 +37,15 @@ def read_product(product_id: str):
         raise HTTPException(status_code=500, detail=f"Error al obtener producto: {str(e)}")
 
 @router.post("/", response_model=dict, status_code=201)
-def create_product(product: ProductCreate):
+def create_product(
+    product: ProductCreate,
+    admin_user: dict = Depends(require_admin)
+):
     """
-    Crear un nuevo producto en Firebase Firestore
+    Crear un nuevo producto en Firebase Firestore (solo administradores)
     """
     try:
-        product_data = product.model_dump()
-        new_product = product_service.create_product(product_data)
+        new_product = product_service.create_product(product)
         return new_product
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al crear producto: {str(e)}")

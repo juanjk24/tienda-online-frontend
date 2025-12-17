@@ -35,3 +35,20 @@ export async function getCategoryById(id: string): Promise<Category | null> {
     throw new Error("Error al obtener la categoría.");
   }
 }
+
+export async function createCategory(
+  categoryData: { name: string; icon: string },
+  token: string
+) {
+  try {
+    const response = await apiClient.post<Category>("/", categoryData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear la categoría:", error);
+    throw new Error("No se pudo crear la categoría.");
+  }
+}
