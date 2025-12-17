@@ -2,6 +2,7 @@ import useCartStore from "../../store/cart";
 import { formatPrice } from "../../utils/format-price";
 import Button from "../Button";
 import Card from "../Card";
+import { CheckoutDialog } from "../CheckoutDialog";
 
 export default function OrderSummary () {
     const getTotalPrice = useCartStore  ((state) => state.getTotalPrice);
@@ -30,7 +31,10 @@ export default function OrderSummary () {
                     </div>
                 </div>
 
-                <Button className="w-full">Proceder al Pago</Button>
+                <CheckoutDialog total={getTotalPrice()}>
+                    <Button className="w-full">Proceder al Pago</Button>
+                </CheckoutDialog>
+                
                 <Button to="/products" className="w-full" outline>Continuar Comprando</Button>
             </div>
         </Card>
