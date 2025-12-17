@@ -43,9 +43,9 @@ export default function ProductActions ({ product }: { product: Product }) {
                 Agregar al Carrito
             </Button>
 
-            <Button outline onClick={addToFavorites}>
+            {/* <Button outline onClick={addToFavorites}>
                 <Heart className="size-4" />
-            </Button>
+            </Button> */}
         </div>
     )
 }
