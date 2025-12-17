@@ -9,6 +9,7 @@ import Layout from "./layout/Layout";
 import ProductInfo from "./pages/ProductInfo";
 import { ScrollToTop } from "./components/ScrollTop";
 import Categories from "./pages/Categories";
+import Orders from "./pages/Orders";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/products/:id" element={<ProductInfo />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/cart" element={<ShoppingCart />} />
+          <Route path="/orders" element={<Orders />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

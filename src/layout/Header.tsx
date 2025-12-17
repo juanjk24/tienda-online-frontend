@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Menu, X, Home, Package, Grid3X3 } from "lucide-react";
+import { ShoppingCart, Menu, X, Home, Package, Grid3X3, PackageSearch } from "lucide-react";
 import { useState } from "react";
 import AuthButton from "../components/AuthButton";
 import useAuthStore from "../store/auth";
@@ -9,6 +9,8 @@ const navigation = [
   { name: "Productos", href: "/products", icon: Package },
   { name: "Categorías", href: "/categories", icon: Grid3X3 },
   { name: "Carrito", href: "/cart", icon: ShoppingCart },
+  { name: "Pedidos", href: "/orders", icon: PackageSearch },
+
 ];
 
 export default function Header() {
