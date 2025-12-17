@@ -15,3 +15,21 @@ export interface CheckoutFormData {
   // Método de pago
   metodoPago: string
 }
+
+export interface Order extends CheckoutFormData {
+  id: string
+  productos: Array<{
+    id: string
+    titulo: string
+    subtotal: number
+    cantidad: number
+    precio: number
+  }>
+  resumen: {
+    subtotal: number
+    totalProductos: number
+  }
+  fecha: string
+  estado: string
+  total: number
+}

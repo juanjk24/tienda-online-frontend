@@ -12,6 +12,7 @@ import { formatPrice } from "../utils/format-price"
 import { toast } from "sonner"
 import { validateEmail, validateCCNumber, validatePhoneNumber } from "@/utils/validations"
 import type { CheckoutFormData } from "../types/checkout"
+import { createOrder } from "../services/orders"
 
 const initialFormData: CheckoutFormData = {
   nombres: "",
@@ -116,42 +117,12 @@ export function CheckoutDialog({
         }
       }
       
-      console.log("📦 NUEVO PEDIDO RECIBIDO:")
-      console.log("👤 Cliente:", `${datosCompletos.nombres} ${datosCompletos.apellidos}`)
-      console.log("📧 Email:", datosCompletos.email)
-      console.log("📱 Celular:", datosCompletos.celular)
-      console.log("🏠 Dirección:", `${datosCompletos.direccion}, ${datosCompletos.barrio}`)
-      console.log("📍 Ubicación:", `${datosCompletos.ciudad}, ${datosCompletos.departamento}`)
-      console.log("💳 Método de pago:", datosCompletos.metodoPago)
-      console.log("🛍️ Productos:")
-      datosCompletos.productos.forEach((producto, index) => {
-        console.log(`   ${index + 1}. ${producto.titulo} (ID: ${producto.id})`)
-        console.log(`      Cantidad: ${producto.cantidad} x ${formatPrice(producto.precio)} = ${formatPrice(producto.subtotal)}`)
-      })
-      console.log("💰 Total:", formatPrice(datosCompletos.total))
-      console.log("📅 Fecha:", new Date(datosCompletos.fecha).toLocaleString('es-CO'))
-      console.log("---")
-      console.log("Datos completos:", datosCompletos)
-      
-      // Enviar email de confirmación
-      console.log("📧 Enviando email de confirmación...")
-      
-      /* const emailResponse = await fetch('/api/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ datosCompletos }),
-      })
+      // enviar la orden al backend
+      await createOrder({
+        ...datosCompletos,
+        estado: "pendiente"
+      });
 
-      if (!emailResponse.ok) {
-        const emailError = await emailResponse.json()
-        console.error("❌ Error enviando email:", emailError)
-        toast.error("Pedido procesado pero hubo un error enviando el email de confirmación")
-      } else {
-        console.log("✅ Email de confirmación enviado")
-      } */
-      
       const totalProductos = cartItems.reduce((sum, item) => sum + item.quantity, 0)
       toast.success(`¡Pedido enviado correctamente! ${totalProductos} productos por ${formatPrice(total)}. Revisa tu email para la confirmación.`)
       setOpen(false)

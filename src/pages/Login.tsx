@@ -42,6 +42,7 @@ export default function Login() {
       const userData = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
+        role: firebaseUser.getIdTokenResult()
       };
 
       zustandLogin(userData);
